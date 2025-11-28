@@ -1,0 +1,1 @@
+-- Add sample data for the database tables that you create in this file
