@@ -5,112 +5,128 @@
 -- You are NOT required to add the schema for tables provided to you in the movies.sql database.
 
 
-create table users (
-    id bigint unsigned auto_increment primary key,
-    first_name varchar(50) not null,
-    last_name varchar(50) not null,   
-    reviews_list varchar(100) not null, 
-    location varchar(150) not null,
-    age int unsigned,
-    follower_count bigint unsigned,        
-    followers_id bigint unsigned not null
-);
-
-create table person (
-    id bigint unsigned auto_increment primary key,
-    first_name varchar(100) not null,
-    last_name varchar(100) not null,    
-    dob date not null,      
-    place_of_birth varchar(150) not null   
-);
-
-create table movie (
-    id bigint unsigned auto_increment primary key,    
-    title varchar(100) not null,
-    release_date date not null,         
-    runtime smallint unsigned not null,
-    budget bigint unsigned not null,
-    revenue bigint unsigned not null,   
-    overview text not null
-);
-
-create table genre (
-    id bigint unsigned auto_increment primary key,
-    name varchar(50) not null
-);
-
-create table movielists (
-    id bigint unsigned auto_increment primary key,
-    name varchar(100) not null,
-    description text not null,
-    user_id bigint unsigned not null,
-    foreign key (user_id) references users(id)
-);
-
-create table reviews (
-    id bigint unsigned auto_increment primary key,
-    stars enum('1','2','3','4','5') not null,
-    body_text text not null,
-    comment_id bigint unsigned,
-    user_id bigint unsigned not null,
-    likes_id bigint unsigned not null,
-    movie_id bigint unsigned not null
-);
-
-create table crew (
-    id bigint unsigned auto_increment primary key,
-    person_id bigint unsigned not null,
-    movie_id bigint unsigned not null,
-    job enum('Director','Producer','Screenplay','Writer','Executive producer') not null
-);
-
-create table movie_cast (
-    id bigint unsigned auto_increment primary key,
-    person_id bigint unsigned not null, 
-    movie_id bigint unsigned not null,   
-    character_name varchar(100) not null,
-    cast_order smallint unsigned
-    foreign key (person_id) references person(id)
-    foreign key (movie_id) references movie(id)
-);
-
-create table movie_genre (
-    primary key (movie_id, genre_id),  
-    movie_id bigint unsigned not null,
-    genre_id bigint unsigned not null
-);
-
-create table movie_movielists(
-    primary key (movie_id, movielists_id),    
-    movie_id bigint unsigned not null,
-    movielists_id bigint unsigned not null
-);
-
-
-create table follow (
-    id bigint unsigned auto_increment primary key,
-    follower_id bigint unsigned not null,
-    following_id bigint unsigned not null,
-    foreign key (follower_id) references users(id),
-    foreign key (following_id) references users(id),    
+CREATE TABLE users (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    location VARCHAR(150),
+    age INT UNSIGNED
 );
  
-create table likes(
-    id bigint unsigned auto_increment primary key,
-    is_liked boolean not null,
-    user_id bigint unsigned not null
+ 
+CREATE TABLE person (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR() NOT NULL,
+    last_name VARCHAR() NOT NULL,
+    dob DATE NOT NULL,
+    place_of_birth VARCHAR(150) NOT NULL
 );
  
-create table comment(
-    id bigint unsigned auto_increment primary key,
-    body_text varchar(500) not null,
-    user_id bigint unsigned,
-    likes_id bigint unsigned,
-    foreign key (user_id) references users(id),
-    foreign key (reviews_id) references users(id)
+ 
+CREATE TABLE movie (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    release_date DATE NOT NULL,
+    runtime SMALLINT UNSIGNED NOT NULL,
+    budget BIGINT UNSIGNED NOT NULL,
+    revenue BIGINT UNSIGNED NOT NULL,
+    overview TEXT NOT NULL
 );
  
-
+ 
+CREATE TABLE genre (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+ 
+ 
+CREATE TABLE movielists (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+ 
+ 
+CREATE TABLE review (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    stars ENUM('1','2','3','4','5') NOT NULL,
+    body_text TEXT NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    movie_id BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+ 
+ 
+CREATE TABLE comment (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    body_text VARCHAR(500) NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    review_id BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (review_id) REFERENCES review(id)
+);
+ 
+ 
+CREATE TABLE likes (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    is_liked BOOLEAN NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    review_id BIGINT UNSIGNED,
+    comment_id BIGINT UNSIGNED,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (review_id) REFERENCES review(id),
+    FOREIGN KEY (comment_id) REFERENCES comment(id)
+);
+ 
+ 
+CREATE TABLE follow (
+    follower_id BIGINT UNSIGNED NOT NULL,
+    following_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (follower_id, following_id),
+    FOREIGN KEY (follower_id) REFERENCES users(id),
+    FOREIGN KEY (following_id) REFERENCES users(id)
+);
+ 
+ 
+CREATE TABLE crew (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    person_id BIGINT UNSIGNED NOT NULL,
+    movie_id BIGINT UNSIGNED NOT NULL,
+    job ENUM('Director','Producer','Screenplay','Writer','Executive producer') NOT NULL,
+    FOREIGN KEY (person_id) REFERENCES person(id),
+    FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+ 
+ 
+CREATE TABLE movie_cast (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    person_id BIGINT UNSIGNED NOT NULL,
+    movie_id BIGINT UNSIGNED NOT NULL,
+    character_name VARCHAR(100) NOT NULL,
+    cast_order SMALLINT UNSIGNED,
+    FOREIGN KEY (person_id) REFERENCES person(id),
+    FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+ 
+CREATE TABLE movie_genre (
+    movie_id BIGINT UNSIGNED NOT NULL,
+    genre_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (movie_id, genre_id),
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (genre_id) REFERENCES genre(id)
+);
+ 
+ 
+CREATE TABLE movie_movielists (
+    movie_id BIGINT UNSIGNED NOT NULL,
+    movielists_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (movie_id, movielists_id),
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (movielists_id) REFERENCES movielists(id)
+);
  
 
 
