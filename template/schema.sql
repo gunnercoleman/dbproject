@@ -16,8 +16,8 @@ CREATE TABLE users (
  
 CREATE TABLE person (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR() NOT NULL,
-    last_name VARCHAR() NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
     dob DATE NOT NULL,
     place_of_birth VARCHAR(150) NOT NULL
 );
@@ -49,7 +49,7 @@ CREATE TABLE movielists (
 );
  
  
-CREATE TABLE review (
+CREATE TABLE reviews (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     stars ENUM('1','2','3','4','5') NOT NULL,
     body_text TEXT NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE comment (
     user_id BIGINT UNSIGNED NOT NULL,
     review_id BIGINT UNSIGNED NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (review_id) REFERENCES review(id)
+    FOREIGN KEY (review_id) REFERENCES reviews(id)
 );
  
  
@@ -77,7 +77,7 @@ CREATE TABLE likes (
     review_id BIGINT UNSIGNED,
     comment_id BIGINT UNSIGNED,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (review_id) REFERENCES review(id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id),
     FOREIGN KEY (comment_id) REFERENCES comment(id)
 );
  
